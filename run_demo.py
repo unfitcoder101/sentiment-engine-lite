@@ -6,10 +6,13 @@ from pathlib import Path
 
 import numpy as np
 
-from se import experiment, scorer, study, synthetic, timeutil
+from se import db, experiment, scorer, study, synthetic, timeutil
 
 BANNER = ("Educational research prototype. Data origin: SYNTHETIC. "
           "No evidence of predictive value. Not investment advice.")
+
+LEXICON_NOTE = ("Small hand-written demo word list. NOT Loughran-McDonald. Headlines are generated "
+                "from the same words, so scoring is circular by construction.")
 
 
 def _clean(v, nd=4):
@@ -23,6 +26,11 @@ def main():
     feats = experiment.sentiment_features(asg, symbols, len(cal.days))
     results = {w: study.run_study(data, w) for w in ("null", "planted")}
     robust = study.run_robustness()
+    feats_by = {s: study.scorer_feats(asg, symbols, len(cal.days), s) for s in ("mock_model", "demo_lexicon")}
+    db_meta = {"banner": BANNER, "data_origin": "SYNTHETIC", "seed": data["seed"], "beta": data["beta"],
+               "market": "US", "n_symbols": len(symbols), "n_days": len(cal.days), "n_articles": len(arts),
+               "first_day": cal.days[0].isoformat(), "last_day": cal.days[-1].isoformat(), "lexicon_note": LEXICON_NOTE}
+    db_path = db.write_demo(Path(__file__).parent / "var" / "demo.sqlite", data, feats_by, results, robust, db_meta)
 
     days = [d.isoformat() for d in cal.days]
     series = {}
@@ -51,8 +59,7 @@ def main():
         "meta": {"banner": BANNER, "data_origin": "SYNTHETIC", "seed": data["seed"], "beta": data["beta"],
                  "market": "US", "n_symbols": len(symbols), "n_days": len(days), "n_articles": len(arts),
                  "n_assignments_kept": int(len(asg)), "first_day": days[0], "last_day": days[-1],
-                 "lexicon_note": "Small hand-written demo word list. NOT Loughran-McDonald. Headlines are generated "
-                                 "from the same words, so scoring is circular by construction.",
+                 "lexicon_note": LEXICON_NOTE,
                  "probabilities": None},
         "symbols": symbols,
         "series_world": "planted",
@@ -72,6 +79,7 @@ def main():
               f"placebo_max={r['placebo_max']:+.4f} -> {r['verdict']}")
     print(f"robustness (10 seeds): null false-alarm rate {robust['null_false_alarm_rate']:.2f}, "
           f"planted detection rate {robust['planted_detection_rate']:.2f}")
+    print(f"wrote {db_path}")
     print(f"wrote {path} ({path.stat().st_size // 1024} KB) in {time.time() - t0:.1f}s")
 
 
