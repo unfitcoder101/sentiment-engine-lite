@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sentiment Engine Lite (synthetic demo)</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1b2430;--muted:#5d6b7c;--line:#d9dee6;--accent:#1f5fbf;--accent-ink:#fff;
+--pos:#1a7f4b;--neg:#b3362b;--neu:#8a6d1a;--none:#6b7280;--warn-bg:#fff4d6;--warn-ink:#5b4300;--warn-line:#e2c56a}
+@media (prefers-color-scheme:dark){:root{--bg:#12161c;--card:#1b222b;--ink:#e6eaf0;--muted:#9aa7b6;--line:#2f3a47;
+--accent:#7fb0ff;--accent-ink:#0d1520;--pos:#5fcf95;--neg:#ff8a7d;--neu:#e0c060;--none:#9aa3af;--warn-bg:#3a2f0c;--warn-ink:#ffe7a3;--warn-line:#7a651f}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#banner{position:sticky;top:0;z-index:5;background:var(--warn-bg);color:var(--warn-ink);border-bottom:2px solid var(--warn-line);
+padding:8px 16px;font-weight:600;font-size:13.5px;text-align:center}
+header,main{max-width:1100px;margin:0 auto;padding:0 16px}
+h1{font-size:20px;margin:16px 0 4px}h2{font-size:17px;margin:0 0 8px}h3{font-size:15px;margin:14px 0 6px}
+p{margin:6px 0}.muted{color:var(--muted)}.small{font-size:13px}
+nav{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+nav button{font:inherit;padding:7px 12px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);cursor:pointer}
+nav button[aria-selected=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:0 0 14px}
+.grid>*{min-width:0}.verdict{overflow-wrap:anywhere}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.scroll{overflow:auto;max-height:420px;border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{position:sticky;top:0;background:var(--card);white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+select{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);max-width:100%}
+svg{display:block;width:100%;height:auto}
+svg text{fill:var(--muted);font-size:11px}
+.bar-row{display:grid;grid-template-columns:150px 1fr 44px;gap:8px;align-items:center;margin:4px 0;font-size:13px}
+.bar{height:14px;border-radius:3px;min-width:2px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:14px;margin:8px 0}
+.kv dt{color:var(--muted)}.kv dd{margin:0;font-variant-numeric:tabular-nums}
+.verdict{font-weight:700;padding:8px 10px;border:2px solid var(--accent);border-radius:6px;margin:8px 0}
+.note{background:var(--warn-bg);color:var(--warn-ink);border:1px solid var(--warn-line);border-radius:6px;padding:8px 10px;font-size:13.5px}
+.tag{display:inline-block;padding:1px 7px;border-radius:10px;border:1px solid currentColor;font-size:12px;white-space:nowrap}
+.b0{color:var(--pos)}.b1{color:var(--neg)}.b2{color:var(--neu)}.b3{color:var(--none)}
+ul{margin:6px 0;padding-left:20px}details{margin-top:10px}summary{cursor:pointer;font-weight:600}
+code{font-size:12.5px}
+@media (max-width:480px){.bar-row{grid-template-columns:118px 1fr 38px}th,td{padding:4px 6px}}
+</style>
+</head>
+<body>
+<div id="banner" role="note">Educational research prototype. Data origin: SYNTHETIC. No evidence of predictive value. Not investment advice.</div>
+<header>
+<h1>Sentiment Engine Lite</h1>
+<p class="muted small" id="meta">Loading data…</p>
+<nav role="tablist" aria-label="Sections" id="tabs"></nav>
+</header>
+<main id="main" tabindex="-1"></main>
+<script>
+"use strict";
+const TABS=[["overview","Overview"],["sentiment","Sentiment"],["headlines","Headlines"],["experiments","Experiments"],["cutoff","Cutoff cases"]];
+const BUCKETS=["positive","negative","neutral (zero-net)","no lexicon coverage"];
+const BVAR=["--pos","--neg","--neu","--none"];
+let D=null,state={tab:"overview",symbol:null,bucket:"all"};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const f4=v=>v==null?"–":(v>=0?"+":"")+v.toFixed(4);
+const tag=b=>`<span class="tag b${BUCKETS.indexOf(b)}">${esc(b)}</span>`;
+
+function renderTabs(){
+  $("tabs").innerHTML=TABS.map(([id,label])=>`<button role="tab" id="tab-${id}" aria-selected="${state.tab===id}" aria-controls="main" data-tab="${id}">${label}</button>`).join("");
+}
+function show(tab){state.tab=tab;history.replaceState(null,"","#"+tab);renderTabs();render();}
+
+function overview(){
+  const m=D.meta;
+  return `<div class="card"><h2>What this is</h2>
+<p>A small university prototype of a pipeline that asks one question: <em>does news sentiment help rank stocks?</em> This version answers nothing about real markets. It only checks that the software is wired correctly, using invented prices and invented headlines.</p>
+<p>The check works like a lab control. Two fake worlds share the same random draws. In the <strong>null</strong> world, news has no link to prices. In the <strong>planted</strong> world, a small known link (beta = ${m.beta} per day) is deliberately inserted. A correct pipeline should flag the planted world and stay quiet in the null world.</p>
+<p class="note">${esc(m.lexicon_note)}</p></div>
+<div class="grid"><div class="card"><h2>Built in this version</h2><ul>
+<li>Publication time → trading day (15:30 New York cutoff, weekends, holidays, date-only items)</li>
+<li>Headline de-duplication (48-hour window) and multi-ticker weights</li>
+<li>Execution-based labels (next open to open 10 days later, scaled by ATR)</li>
+<li>Sentiment features S1, S5, NVS, ABN with per-date ranks</li>
+<li>Synthetic data generator (${m.n_symbols} fake tickers, ${m.n_days} trading days, ${m.n_articles} fake articles, seed ${m.seed})</li>
+<li>Demo lexicon scorer; baseline vs sentiment vs shuffled-placebo experiment; block bootstrap</li></ul></div>
+<div class="card"><h2>Planned, not built</h2><ul>
+<li>FinBERT / finbert-tone / Loughran-McDonald adapters</li><li>SQLite layer and CSV importers</li><li>FastAPI service</li>
+<li>Pre-registration hashing</li><li>Ablations and power table</li><li>Confirmatory-mode guard</li><li>Full docs set</li></ul></div>
+<div class="card"><h2>Blocked, with reasons</h2><ul>
+<li><strong>FNSPID and Alpaca news data:</strong> licences unresolved, so no real news is used.</li>
+<li><strong>FinBERT:</strong> training dates unverified, so it could only ever be exploratory.</li>
+<li><strong>Loughran-McDonald word list:</strong> version not frozen, so it is not used.</li></ul></div></div>`;
+}
+
+function lineChart(dates,vals,counts){
+  const W=720,H1=150,H2=70,L=38,R=8,n=dates.length,x=i=>L+(W-L-R)*i/(n-1);
+  const amax=Math.max(0.05,...vals.map(v=>Math.abs(v||0))),y=v=>10+(H1-20)*(1-(v+amax)/(2*amax));
+  let d="",pen=false;
+  vals.forEach((v,i)=>{if(v==null){pen=false;return;}d+=(pen?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1);pen=true;});
+  const cmax=Math.max(1,...counts),bw=Math.max(0.8,(W-L-R)/n),top=H1+14;
+  const bars=counts.map((c,i)=>c?`<rect x="${(x(i)-bw/2).toFixed(1)}" y="${(top+H2*(1-c/cmax)).toFixed(1)}" width="${bw.toFixed(1)}" height="${(H2*c/cmax).toFixed(1)}"/>`:"").join("");
+  const ticks=[0,Math.floor(n/3),Math.floor(2*n/3),n-1].map(i=>`<text x="${x(i)}" y="${top+H2+14}" text-anchor="${i===0?"start":i===n-1?"end":"middle"}">${dates[i]}</text>`).join("");
+  return `<svg viewBox="0 0 ${W} ${top+H2+20}" role="img" aria-label="S5 sentiment line and daily news-count bars; values are in the table below">
+<line x1="${L}" x2="${W-R}" y1="${y(0)}" y2="${y(0)}" stroke="var(--line)"/>
+<text x="${L-4}" y="${y(amax)+4}" text-anchor="end">${amax.toFixed(2)}</text><text x="${L-4}" y="${y(0)+4}" text-anchor="end">0</text><text x="${L-4}" y="${y(-amax)+4}" text-anchor="end">-${amax.toFixed(2)}</text>
+<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="1.4"/>
+<text x="${L}" y="${top-2}">articles per day (max ${cmax})</text>
+<g fill="var(--muted)">${bars}</g>${ticks}</svg>`;
+}
+function sentiment(){
+  const s=state.symbol,ser=D.series[s],dates=D.series_dates,b=D.buckets[s];
+  const tot=BUCKETS.reduce((a,k)=>a+b[k],0),bmax=Math.max(1,...BUCKETS.map(k=>b[k]));
+  const rows=dates.map((d,i)=>`<tr><td>${d}</td><td class="num">${f4(ser.S1[i])}</td><td class="num">${f4(ser.S5[i])}</td><td class="num">${ser.count[i]}</td></tr>`).join("");
+  return `<div class="card"><label for="sym"><strong>Synthetic ticker</strong></label>
+<select id="sym">${D.symbols.map(x=>`<option${x===s?" selected":""}>${x}</option>`).join("")}</select>
+<p class="muted small">Sentiment features are computed from fake headlines with the demo lexicon; the two worlds share the same news. S5 = weighted mean score over the last 5 trading days. A gap in the line means no scored news in that window.</p>
+<h3>S5 (line) and scored articles per day (bars)</h3>${lineChart(dates,ser.S5,ser.count)}
+<details><summary>Data table for this chart (${dates.length} trading days)</summary><div class="scroll"><table><thead><tr><th>Trading day</th><th class="num">S1</th><th class="num">S5</th><th class="num">Articles</th></tr></thead><tbody>${rows}</tbody></table></div></details></div>
+<div class="card"><h2>Headline buckets for ${s}</h2>
+${BUCKETS.map((k,i)=>`<div class="bar-row"><span>${k}</span><div><div class="bar" style="width:${100*b[k]/bmax}%;background:var(${BVAR[i]})"></div></div><span class="num">${b[k]}</span></div>`).join("")}
+<p class="muted small">“No lexicon coverage” means no demo-list word was found. It is not treated as neutral and is left out of the sentiment features.</p>
+<table><thead><tr><th>Bucket</th><th class="num">Articles</th><th class="num">Share</th></tr></thead><tbody>
+${BUCKETS.map(k=>`<tr><td>${k}</td><td class="num">${b[k]}</td><td class="num">${tot?(100*b[k]/tot).toFixed(1):"0.0"}%</td></tr>`).join("")}</tbody></table></div>`;
+}
+
+function headlines(){
+  const list=D.headlines.filter(h=>state.bucket==="all"||h.bucket===state.bucket);
+  const rows=list.map(h=>`<tr><td>${esc(h.headline)}<br><span class="muted">${esc(h.kind)}</span> ${tag(h.bucket)}</td><td>${esc(h.utc==null?"(missing)":h.utc)}</td><td>${esc(h.local||"–")}</td><td>${esc(h.assigned||"invalid")}</td><td>${esc(h.reason)}</td><td>${esc(h.matched.join(", ")||"–")}</td></tr>`).join("");
+  return `<div class="card"><label for="bk"><strong>Filter by bucket</strong></label>
+<select id="bk"><option value="all">all buckets</option>${BUCKETS.map(k=>`<option${k===state.bucket?" selected":""}>${k}</option>`).join("")}</select>
+<p class="muted small">${list.length} of ${D.headlines.length} sample fake headlines. The sample deliberately over-represents date-only, multi-ticker, duplicate and invalid items. Scores are lexicon counts, not probabilities.</p>
+<div class="scroll" style="max-height:560px"><table><thead><tr><th>Headline (synthetic)</th><th>UTC</th><th>New York time</th><th>Assigned day</th><th>Reason</th><th>Matched words</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function placeboStrip(r){
+  const W=320,H=54,all=r.placebo_deltas.concat([r.delta_ic,0]),lo=Math.min(...all),hi=Math.max(...all),pad=(hi-lo)*0.08||0.01;
+  const x=v=>10+(W-20)*(v-(lo-pad))/((hi+pad)-(lo-pad));
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="20 placebo delta IC values as dots, observed delta IC as a vertical line; values in the table below">
+<line x1="10" x2="${W-10}" y1="28" y2="28" stroke="var(--line)"/><line x1="${x(0)}" x2="${x(0)}" y1="20" y2="36" stroke="var(--muted)"/><text x="${x(0)}" y="49" text-anchor="middle">0</text>
+${r.placebo_deltas.map(v=>`<circle cx="${x(v).toFixed(1)}" cy="28" r="3.5" fill="var(--muted)" fill-opacity=".65"/>`).join("")}
+<line x1="${x(r.delta_ic)}" x2="${x(r.delta_ic)}" y1="8" y2="40" stroke="var(--accent)" stroke-width="3"/><text x="${x(r.delta_ic)}" y="49" text-anchor="${x(r.delta_ic)>W*0.75?"end":"middle"}" style="fill:var(--accent)">observed</text></svg>`;
+}
+function worldCard(r){
+  const title=r.world==="null"?"Null world (no link planted)":`Planted world (beta = ${D.meta.beta})`;
+  return `<div class="card"><h2>${title}</h2>
+<div class="verdict">${esc(r.verdict)}</div>
+<dl class="kv"><dt>Delta IC (C − B)</dt><dd>${f4(r.delta_ic)}</dd>
+<dt>One-sided p-value</dt><dd>${r.p_value.toFixed(4)} <span class="muted">(flag threshold ${r.alpha})</span></dd>
+<dt>Unadjusted 95% interval</dt><dd>${f4(r.ci_low)} to ${f4(r.ci_high)}</dd>
+<dt>Mean daily IC, baseline B</dt><dd>${f4(r.ic_b)}</dd><dt>Mean daily IC, with sentiment C</dt><dd>${f4(r.ic_c)}</dd>
+<dt>Placebo (C2)</dt><dd>${r.placebo_pass?"observed ≥ all 20 shuffles":"observed below at least one shuffle"} <span class="muted">(max ${f4(r.placebo_max)})</span></dd>
+<dt>Test days / rows</dt><dd>${r.n_test_days} / ${r.n_test_rows} <span class="muted">(train rows ${r.n_train_rows})</span></dd></dl>
+<h3>20 placebo shuffles vs observed</h3>${placeboStrip(r)}
+<details><summary>Placebo values table</summary><table><thead><tr><th>Shuffle</th><th class="num">Delta IC</th></tr></thead><tbody>
+${r.placebo_deltas.map((v,i)=>`<tr><td>${i+1}</td><td class="num">${f4(v)}</td></tr>`).join("")}<tr><td><strong>observed</strong></td><td class="num"><strong>${f4(r.delta_ic)}</strong></td></tr></tbody></table></details></div>`;
+}
+function experiments(){
+  const b=D.experiments.null.bootstrap;
+  return `<p class="note"><strong>Software check on invented data, not evidence about markets.</strong> The planted link was put there on purpose; finding it only shows the pipeline can see an effect that exists by construction.</p>
+<div class="grid" style="margin-top:14px">${worldCard(D.experiments.null)}${worldCard(D.experiments.planted)}</div>
+<div class="card small"><h2>How to read this</h2><p>B = model on price-only baseline features. C = B plus sentiment features. IC = daily rank correlation between the model score and the later ATR-scaled return; delta IC is C minus B, averaged over 2022 test days (trained on 2020–2021 with a purge and embargo gap). The p-value comes from a paired stationary bootstrap (mean block ${b.mean_block} days, ${b.n_resamples} resamples, seed ${b.seed}). The placebo shuffles the sentiment block across stocks within each date; the observed delta must be at least as large as all 20 shuffles. Intervals are unadjusted. Model scores are ranking scores, not probabilities.</p></div>`;
+}
+
+function cutoff(){
+  const rows=D.cutoff_cases.map(c=>`<tr><td><code>${esc(c.input)}</code></td><td>${esc(c.precision)}</td><td>${esc(c.local||"–")}</td><td>${esc(c.assigned||"invalid")}</td><td>${esc(c.reason)}</td><td>${esc(c.expected||"invalid")}</td><td>${c.match?"yes":"NO"}</td><td>${esc(c.note)}</td></tr>`).join("");
+  return `<div class="card"><h2>Cutoff cases, computed by the real assign() code</h2>
+<p class="muted small">US market, cutoff 15:30 New York time (inclusive). Time zone offsets come from the system zone database, not hard-coded numbers. Calendar: weekdays of 2023 minus ten listed holidays.</p>
+<div class="scroll" style="max-height:none"><table><thead><tr><th>Input (UTC)</th><th>Precision</th><th>New York time</th><th>Assigned day</th><th>Reason</th><th>Expected</th><th>Match</th><th>Note</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function render(){
+  const views={overview,sentiment,headlines,experiments,cutoff};
+  $("main").innerHTML=views[state.tab]();
+  const sym=$("sym");if(sym)sym.onchange=e=>{state.symbol=e.target.value;render();$("sym").focus();};
+  const bk=$("bk");if(bk)bk.onchange=e=>{state.bucket=e.target.value;render();$("bk").focus();};
+}
+$("tabs").addEventListener("click",e=>{const b=e.target.closest("button[data-tab]");if(b){show(b.dataset.tab);$("tab-"+b.dataset.tab).focus();}});
+$("tabs").addEventListener("keydown",e=>{
+  if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft")return;
+  const i=TABS.findIndex(t=>t[0]===state.tab),j=(i+(e.key==="ArrowRight"?1:TABS.length-1))%TABS.length;
+  show(TABS[j][0]);$("tab-"+TABS[j][0]).focus();
+});
+fetch("data.json").then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json();}).then(d=>{
+  D=d;state.symbol=d.symbols[0];
+  const h=location.hash.slice(1);if(TABS.some(t=>t[0]===h))state.tab=h;
+  $("banner").textContent=d.meta.banner;
+  $("meta").textContent=`Synthetic data, seed ${d.meta.seed}, ${d.meta.first_day} to ${d.meta.last_day}. Nothing here describes a real company or market.`;
+  renderTabs();render();
+}).catch(err=>{
+  renderTabs();
+  $("meta").textContent="";
+  $("main").innerHTML=`<div class="card"><h2>No data yet</h2><p>Could not load <code>data.json</code> (${esc(err.message)}). Run <code>.venv/bin/python run_demo.py</code>, then <code>.venv/bin/python serve.py</code>, and open http://127.0.0.1:8000/.</p></div>`;
+});
+</script>
+</body>
+</html>
