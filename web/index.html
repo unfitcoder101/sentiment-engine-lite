@@ -13,35 +13,36 @@
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 #banner{position:sticky;top:0;z-index:5;background:var(--warn-bg);color:var(--warn-ink);border-bottom:2px solid var(--warn-line);
 padding:8px 16px;font-weight:600;font-size:13.5px;text-align:center}
-header,main{max-width:1100px;margin:0 auto;padding:0 16px}
+header,main{max-width:1180px;margin:0 auto;padding:0 16px}
 h1{font-size:20px;margin:16px 0 4px}h2{font-size:17px;margin:0 0 8px}h3{font-size:15px;margin:14px 0 6px}
 p{margin:6px 0}.muted{color:var(--muted)}.small{font-size:13px}
 nav{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
-nav button{font:inherit;padding:7px 12px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);cursor:pointer}
-nav button[aria-selected=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+nav button,.btn{font:inherit;padding:7px 12px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);cursor:pointer}
+nav button[aria-selected=true],.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.btn[disabled]{opacity:.5;cursor:default}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:0 0 14px}
-.grid>*{min-width:0}.verdict{overflow-wrap:anywhere}
-.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
-.scroll{overflow:auto;max-height:420px;border:1px solid var(--line);border-radius:6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:0 0 14px;min-width:0}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.grid>*{min-width:0}
+.scroll{overflow:auto;max-height:420px;border:1px solid var(--line);border-radius:6px}.scroll.tall{max-height:none}
 table{border-collapse:collapse;width:100%;font-size:13px}
 th,td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
 th{position:sticky;top:0;background:var(--card);white-space:nowrap}
-td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
-select{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);max-width:100%}
-svg{display:block;width:100%;height:auto}
-svg text{fill:var(--muted);font-size:11px}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+select,input[type=text]{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);max-width:100%}
+label{font-weight:600;margin-right:4px}.controls{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:8px}
+svg{display:block;width:100%;height:auto}svg text{fill:var(--muted);font-size:11px}
 .bar-row{display:grid;grid-template-columns:150px 1fr 44px;gap:8px;align-items:center;margin:4px 0;font-size:13px}
 .bar{height:14px;border-radius:3px;min-width:2px}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:14px;margin:8px 0}
-.kv dt{color:var(--muted)}.kv dd{margin:0;font-variant-numeric:tabular-nums}
-.verdict{font-weight:700;padding:8px 10px;border:2px solid var(--accent);border-radius:6px;margin:8px 0}
-.note{background:var(--warn-bg);color:var(--warn-ink);border:1px solid var(--warn-line);border-radius:6px;padding:8px 10px;font-size:13.5px}
+.kv dt{color:var(--muted)}.kv dd{margin:0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.verdict{font-weight:700;padding:8px 10px;border:2px solid var(--accent);border-radius:6px;margin:8px 0;overflow-wrap:anywhere}
+.note{background:var(--warn-bg);color:var(--warn-ink);border:1px solid var(--warn-line);border-radius:6px;padding:8px 10px;font-size:13.5px;margin:8px 0}
 .tag{display:inline-block;padding:1px 7px;border-radius:10px;border:1px solid currentColor;font-size:12px;white-space:nowrap}
 .b0{color:var(--pos)}.b1{color:var(--neg)}.b2{color:var(--neu)}.b3{color:var(--none)}
 ul{margin:6px 0;padding-left:20px}details{margin-top:10px}summary{cursor:pointer;font-weight:600}
-code{font-size:12.5px}
-@media (max-width:480px){.bar-row{grid-template-columns:118px 1fr 38px}th,td{padding:4px 6px}}
+code{font-size:12.5px;overflow-wrap:anywhere}td code{white-space:nowrap}.hash{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;overflow-wrap:anywhere}
+.formula{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;overflow-wrap:anywhere}
+@media (max-width:480px){.bar-row{grid-template-columns:118px 1fr 38px}th,td{padding:4px 6px}.kv{grid-template-columns:1fr}.kv dd{margin-bottom:4px}}
 </style>
 </head>
 <body>
@@ -54,123 +55,283 @@ code{font-size:12.5px}
 <main id="main" tabindex="-1"></main>
 <script>
 "use strict";
-const TABS=[["overview","Overview"],["sentiment","Sentiment"],["headlines","Headlines"],["experiments","Experiments"],["cutoff","Cutoff cases"]];
-const BUCKETS=["positive","negative","neutral (zero-net)","no lexicon coverage"];
+const TABS=[["overview","Overview"],["sentiment","Sentiment"],["headlines","Headlines"],["experiments","Experiments"],["cutoff","Cutoff cases"],
+["models","Model comparison"],["features","Feature explanations"],["gates","Gates"],["tools","Method tools"],["method","Methodology and limitations"]];
+const LEX=["positive","negative","neutral (zero-net)","no lexicon coverage"],MOD=["positive","negative","neutral"];
 const BVAR=["--pos","--neg","--neu","--none"];
-let D=null,state={tab:"overview",symbol:null,bucket:"all"};
+const NEEDS_API="This view needs the live API. Start it with: .venv/bin/python -m se.cli serve";
+let MODE="static",BUNDLE=null,META=null,SYMS=[];
+const cache={},state={tab:"overview",symbol:null,scorer:"mock_model",filter:"all",offset:0,date:null,assign:null};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const f4=v=>v==null?"–":(v>=0?"+":"")+v.toFixed(4);
-const tag=b=>`<span class="tag b${BUCKETS.indexOf(b)}">${esc(b)}</span>`;
+const f4=v=>v==null?"–":(v>=0?"+":"")+Number(v).toFixed(4);
+const p4=v=>v==null?"–":Number(v).toFixed(4);
+const yes=b=>b?"yes":"no";
+const tag=(b,list)=>`<span class="tag b${(list||LEX).indexOf(b)<0?3:(list||LEX).indexOf(b)}">${esc(b)}</span>`;
+function tbl(heads,rows,nums,cls){nums=nums||[];
+  return `<div class="scroll ${cls||""}"><table><thead><tr>${heads.map((h,i)=>`<th${nums.includes(i)?' class="num"':""}>${h}</th>`).join("")}</tr></thead><tbody>${
+    rows.map(r=>`<tr>${r.map((c,i)=>`<td${nums.includes(i)?' class="num"':""}>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;}
+const picker=(id,label,opts,val)=>`<span><label for="${id}">${label}</label><select id="${id}">${opts.map(o=>{const[v,t]=Array.isArray(o)?o:[o,o];return `<option value="${esc(v)}"${v===val?" selected":""}>${esc(t)}</option>`;}).join("")}</select></span>`;
 
+async function get(path){
+  if(cache[path])return cache[path];
+  let env;
+  if(MODE==="api"){const r=await fetch("api"+path);env=await r.json();if(!r.ok)throw new Error(env.detail||env.error||("HTTP "+r.status));}
+  else{env=BUNDLE[path];if(!env)throw new Error(NEEDS_API);}
+  cache[path]=env.data;return env.data;
+}
 function renderTabs(){
   $("tabs").innerHTML=TABS.map(([id,label])=>`<button role="tab" id="tab-${id}" aria-selected="${state.tab===id}" aria-controls="main" data-tab="${id}">${label}</button>`).join("");
 }
 function show(tab){state.tab=tab;history.replaceState(null,"","#"+tab);renderTabs();render();}
 
-function overview(){
-  const m=D.meta;
+/* ---------- Overview ---------- */
+async function overview(){
+  const m=META,g=(await get("/gates")).gates;
+  const blocked=Object.entries(g).filter(([k,v])=>["blocked","rejected","not_adopted","exploratory_only"].includes(v.status));
   return `<div class="card"><h2>What this is</h2>
-<p>A small university prototype of a pipeline that asks one question: <em>does news sentiment help rank stocks?</em> This version answers nothing about real markets. It only checks that the software is wired correctly, using invented prices and invented headlines.</p>
-<p>The check works like a lab control. Two fake worlds share the same random draws. In the <strong>null</strong> world, news has no link to prices. In the <strong>planted</strong> world, a small known link (beta = ${m.beta} per day) is deliberately inserted. A correct pipeline should flag the planted world and stay quiet in the null world.</p>
-<p class="note">${esc(m.lexicon_note)}</p></div>
-<div class="grid"><div class="card"><h2>Built in this version</h2><ul>
-<li>Publication time → trading day (15:30 New York cutoff, weekends, holidays, date-only items)</li>
-<li>Headline de-duplication (48-hour window) and multi-ticker weights</li>
-<li>Execution-based labels (next open to open 10 days later, scaled by ATR)</li>
-<li>Sentiment features S1, S5, NVS, ABN with per-date ranks</li>
-<li>Synthetic data generator (${m.n_symbols} fake tickers, ${m.n_days} trading days, ${m.n_articles} fake articles, seed ${m.seed})</li>
-<li>Demo lexicon scorer; baseline vs sentiment vs shuffled-placebo experiment; block bootstrap</li></ul></div>
-<div class="card"><h2>Planned, not built</h2><ul>
-<li>FinBERT / finbert-tone / Loughran-McDonald adapters</li><li>SQLite layer and CSV importers</li><li>FastAPI service</li>
-<li>Pre-registration hashing</li><li>Ablations and power table</li><li>Confirmatory-mode guard</li><li>Full docs set</li></ul></div>
-<div class="card"><h2>Blocked, with reasons</h2><ul>
-<li><strong>FNSPID and Alpaca news data:</strong> licences unresolved, so no real news is used.</li>
-<li><strong>FinBERT:</strong> training dates unverified, so it could only ever be exploratory.</li>
-<li><strong>Loughran-McDonald word list:</strong> version not frozen, so it is not used.</li></ul></div></div>`;
+<p>A university prototype of a research pipeline for one question: <em>does news sentiment help rank stocks?</em> This version answers nothing about real markets. It checks that the software is wired correctly, using invented prices and invented headlines.</p>
+<p>The check works like a lab control. Two fake worlds share the same random draws. In the <strong>null</strong> world, news has no link to prices. In the <strong>planted</strong> world, a small known link (beta = ${m.beta} per day) is inserted on purpose. A correct pipeline should flag the planted world and stay quiet in the null world. The rules for "flag" were written down and hashed before the run.</p>
+<p class="note">${esc(m.lexicon_note)}</p>
+<p class="small muted">Data source for this page: ${MODE==="api"?"live read-only API over the local SQLite database":"static file web/data.json (start the API for the interactive tools)"}.</p></div>
+<div class="grid"><div class="card"><h2>Built and tested</h2><ul>
+<li>Publication time to trading day (cutoff, weekends, holidays, date-only items)</li>
+<li>De-duplication (48 hours) and multi-ticker weights</li>
+<li>Execution-based labels and four sentiment features</li>
+<li>Synthetic generator: ${m.n_symbols} fake tickers, ${m.n_days} trading days, ${m.n_articles} fake articles, seed ${m.seed}</li>
+<li>Two demo scorers: a demo lexicon and a MOCK MODEL (not FinBERT)</li>
+<li>Experiment framework: frozen samples, nine arms, two folds, block bootstrap, Holm correction, two placebos, ten-seed robustness</li>
+<li>Pre-registration hashing, run modes and a confirmatory guard</li>
+<li>SQLite storage, CSV importers, read-only API, this dashboard</li></ul></div>
+<div class="card"><h2>Present as code only (never run on real inputs)</h2><ul>
+<li>FinBERT, finbert-tone and Loughran-McDonald adapters: tested with fake files; no weights or dictionary included</li>
+<li>CSV importers: tested on tiny hand-made files</li>
+<li>Confirmatory mode: always refused under the current gates</li></ul>
+<h3>Not built</h3><ul><li>Any pipeline over real or imported data</li><li>Any result about real markets</li></ul></div>
+<div class="card"><h2>Blocked or limited, with reasons</h2><ul>
+${blocked.map(([k,v])=>`<li><strong>${esc(k)}</strong> (${esc(v.status.replace(/_/g," "))}): ${esc(v.reason)}</li>`).join("")}</ul>
+<p class="small muted">See the Gates tab for what would unlock each item.</p></div></div>`;
 }
 
+/* ---------- Sentiment ---------- */
 function lineChart(dates,vals,counts){
-  const W=720,H1=150,H2=70,L=38,R=8,n=dates.length,x=i=>L+(W-L-R)*i/(n-1);
+  const W=720,H1=150,H2=70,L=38,R=8,n=dates.length,x=i=>L+(W-L-R)*i/Math.max(1,n-1);
   const amax=Math.max(0.05,...vals.map(v=>Math.abs(v||0))),y=v=>10+(H1-20)*(1-(v+amax)/(2*amax));
   let d="",pen=false;
   vals.forEach((v,i)=>{if(v==null){pen=false;return;}d+=(pen?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1);pen=true;});
   const cmax=Math.max(1,...counts),bw=Math.max(0.8,(W-L-R)/n),top=H1+14;
   const bars=counts.map((c,i)=>c?`<rect x="${(x(i)-bw/2).toFixed(1)}" y="${(top+H2*(1-c/cmax)).toFixed(1)}" width="${bw.toFixed(1)}" height="${(H2*c/cmax).toFixed(1)}"/>`:"").join("");
   const ticks=[0,Math.floor(n/3),Math.floor(2*n/3),n-1].map(i=>`<text x="${x(i)}" y="${top+H2+14}" text-anchor="${i===0?"start":i===n-1?"end":"middle"}">${dates[i]}</text>`).join("");
-  return `<svg viewBox="0 0 ${W} ${top+H2+20}" role="img" aria-label="S5 sentiment line and daily news-count bars; values are in the table below">
+  return `<svg viewBox="0 0 ${W} ${top+H2+20}" role="img" aria-label="S5 sentiment line and daily article-count bars; values are in the table below">
 <line x1="${L}" x2="${W-R}" y1="${y(0)}" y2="${y(0)}" stroke="var(--line)"/>
 <text x="${L-4}" y="${y(amax)+4}" text-anchor="end">${amax.toFixed(2)}</text><text x="${L-4}" y="${y(0)+4}" text-anchor="end">0</text><text x="${L-4}" y="${y(-amax)+4}" text-anchor="end">-${amax.toFixed(2)}</text>
 <path d="${d}" fill="none" stroke="var(--accent)" stroke-width="1.4"/>
-<text x="${L}" y="${top-2}">articles per day (max ${cmax})</text>
-<g fill="var(--muted)">${bars}</g>${ticks}</svg>`;
+<text x="${L}" y="${top-2}">scored articles per day (max ${cmax})</text><g fill="var(--muted)">${bars}</g>${ticks}</svg>`;
 }
-function sentiment(){
-  const s=state.symbol,ser=D.series[s],dates=D.series_dates,b=D.buckets[s];
-  const tot=BUCKETS.reduce((a,k)=>a+b[k],0),bmax=Math.max(1,...BUCKETS.map(k=>b[k]));
-  const rows=dates.map((d,i)=>`<tr><td>${d}</td><td class="num">${f4(ser.S1[i])}</td><td class="num">${f4(ser.S5[i])}</td><td class="num">${ser.count[i]}</td></tr>`).join("");
-  return `<div class="card"><label for="sym"><strong>Synthetic ticker</strong></label>
-<select id="sym">${D.symbols.map(x=>`<option${x===s?" selected":""}>${x}</option>`).join("")}</select>
-<p class="muted small">Sentiment features are computed from fake headlines with the demo lexicon; the two worlds share the same news. S5 = weighted mean score over the last 5 trading days. A gap in the line means no scored news in that window.</p>
-<h3>S5 (line) and scored articles per day (bars)</h3>${lineChart(dates,ser.S5,ser.count)}
-<details><summary>Data table for this chart (${dates.length} trading days)</summary><div class="scroll"><table><thead><tr><th>Trading day</th><th class="num">S1</th><th class="num">S5</th><th class="num">Articles</th></tr></thead><tbody>${rows}</tbody></table></div></details></div>
-<div class="card"><h2>Headline buckets for ${s}</h2>
-${BUCKETS.map((k,i)=>`<div class="bar-row"><span>${k}</span><div><div class="bar" style="width:${100*b[k]/bmax}%;background:var(${BVAR[i]})"></div></div><span class="num">${b[k]}</span></div>`).join("")}
-<p class="muted small">“No lexicon coverage” means no demo-list word was found. It is not treated as neutral and is left out of the sentiment features.</p>
-<table><thead><tr><th>Bucket</th><th class="num">Articles</th><th class="num">Share</th></tr></thead><tbody>
-${BUCKETS.map(k=>`<tr><td>${k}</td><td class="num">${b[k]}</td><td class="num">${tot?(100*b[k]/tot).toFixed(1):"0.0"}%</td></tr>`).join("")}</tbody></table></div>`;
+const SC_OPTS=[["mock_model","MOCK MODEL (not FinBERT)"],["demo_lexicon","Demo lexicon (not Loughran-McDonald)"]];
+async function sentiment(){
+  const s=state.symbol,d=await get(`/sentiment/${s}?scorer=${state.scorer}`),keys=Object.keys(d.buckets);
+  const tot=keys.reduce((a,k)=>a+d.buckets[k],0),bmax=Math.max(1,...keys.map(k=>d.buckets[k]));
+  const rows=d.dates.map((x,i)=>[x,f4(d.S1[i]),f4(d.S5[i]),d.count[i]]);
+  return `<div class="card"><div class="controls">${picker("sym","Synthetic ticker",SYMS,s)}${picker("scorer","Scorer",SC_OPTS,state.scorer)}</div>
+<p class="muted small">Features come from fake headlines scored by <strong>${esc(d.scorer_label)}</strong>. Both worlds share the same news. S5 = weighted mean score over the last 5 trading days; a gap means no scored news in that window.</p>
+<h3>S5 (line) and scored articles per day (bars)</h3>${lineChart(d.dates,d.S5,d.count)}
+<details><summary>Data table for this chart (${d.dates.length} trading days)</summary>${tbl(["Trading day","S1","S5","Articles"],rows,[1,2,3])}</details></div>
+<div class="card"><h2>${d.kind==="lexicon"?"Lexicon buckets":"Model labels"} for ${s}</h2>
+${keys.map((k,i)=>`<div class="bar-row"><span>${esc(k)}</span><div><div class="bar" style="width:${100*d.buckets[k]/bmax}%;background:var(${BVAR[d.kind==="lexicon"?i:[0,1,2][i]]})"></div></div><span class="num">${d.buckets[k]}</span></div>`).join("")}
+<p class="muted small">${d.kind==="lexicon"?"“No lexicon coverage” means no demo-list word was found. It is not treated as neutral and is left out of the lexicon features.":"These are the fake model's labels (largest output score). Output scores are not probabilities of any price move."}</p>
+${tbl([d.kind==="lexicon"?"Bucket":"Label","Articles","Share"],keys.map(k=>[esc(k),d.buckets[k],(tot?(100*d.buckets[k]/tot).toFixed(1):"0.0")+"%"]),[1,2],"tall")}</div>`;
 }
 
-function headlines(){
-  const list=D.headlines.filter(h=>state.bucket==="all"||h.bucket===state.bucket);
-  const rows=list.map(h=>`<tr><td>${esc(h.headline)}<br><span class="muted">${esc(h.kind)}</span> ${tag(h.bucket)}</td><td>${esc(h.utc==null?"(missing)":h.utc)}</td><td>${esc(h.local||"–")}</td><td>${esc(h.assigned||"invalid")}</td><td>${esc(h.reason)}</td><td>${esc(h.matched.join(", ")||"–")}</td></tr>`).join("");
-  return `<div class="card"><label for="bk"><strong>Filter by bucket</strong></label>
-<select id="bk"><option value="all">all buckets</option>${BUCKETS.map(k=>`<option${k===state.bucket?" selected":""}>${k}</option>`).join("")}</select>
-<p class="muted small">${list.length} of ${D.headlines.length} sample fake headlines. The sample deliberately over-represents date-only, multi-ticker, duplicate and invalid items. Scores are lexicon counts, not probabilities.</p>
-<div class="scroll" style="max-height:560px"><table><thead><tr><th>Headline (synthetic)</th><th>UTC</th><th>New York time</th><th>Assigned day</th><th>Reason</th><th>Matched words</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+/* ---------- Headlines ---------- */
+async function headlines(){
+  const d=await get(`/sentiment/${state.symbol}/headlines?limit=40&offset=${state.offset}`);
+  const fopts=[["all","all"]].concat(LEX.map(b=>["lex:"+b,"lexicon: "+b]),MOD.map(l=>["mod:"+l,"model label: "+l]));
+  const list=d.items.filter(h=>state.filter==="all"||(state.filter.startsWith("lex:")?h.lexicon.bucket===state.filter.slice(4):h.model.label===state.filter.slice(4)));
+  const rows=list.map(h=>[`${esc(h.headline)}<br><span class="muted">${esc(h.kind)}${h.kept?"":", not used"}</span>`,esc(h.utc==null?"(missing)":h.utc),esc(h.local||"–"),esc(h.assigned||"invalid"),esc(h.reason),
+    `${tag(h.lexicon.bucket)}<br><span class="muted">${esc(h.lexicon.matched.join(", ")||"–")}</span>`,`${tag(h.model.label,MOD)}<br><span class="muted">x ${f4(h.model.x)}</span>`]);
+  const last=d.offset+d.items.length;
+  return `<div class="card"><div class="controls">${picker("sym","Synthetic ticker",SYMS,state.symbol)}${picker("flt","Filter",fopts,state.filter)}</div>
+<p class="muted small">Showing ${list.length} of rows ${d.total?d.offset+1:0}–${last} (${d.total} for this ticker), newest assigned day first. Lexicon buckets and model labels are shown in separate columns and never merged. Neither is a probability.</p>
+${tbl(["Headline (synthetic)","UTC","New York time","Assigned day","Reason","Lexicon bucket, matched words","MOCK MODEL label"],rows,[],"tall")}
+<p class="controls" style="margin-top:10px"><button class="btn" id="prev"${d.offset===0?" disabled":""}>Previous</button><button class="btn" id="next"${(last>=d.total||MODE!=="api")?" disabled":""}>Next</button>
+${MODE!=="api"?'<span class="muted small">Static file holds the first 40 rows per ticker; paging needs the live API.</span>':""}</p></div>`;
 }
 
-function placeboStrip(r){
-  const W=320,H=54,all=r.placebo_deltas.concat([r.delta_ic,0]),lo=Math.min(...all),hi=Math.max(...all),pad=(hi-lo)*0.08||0.01;
+/* ---------- Experiments ---------- */
+function forest(cs){
+  const W=720,L=150,R=16,rowH=24,H=cs.length*rowH+30,lo=Math.min(0,...cs.map(c=>c.ci_low)),hi=Math.max(0,...cs.map(c=>c.ci_high)),pad=(hi-lo)*0.06||0.01;
+  const x=v=>L+(W-L-R)*(v-(lo-pad))/((hi+pad)-(lo-pad));
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Delta IC with unadjusted 95% intervals for each comparison; values are in the table below">
+<line x1="${x(0)}" x2="${x(0)}" y1="4" y2="${H-22}" stroke="var(--muted)" stroke-dasharray="3 3"/><text x="${x(0)}" y="${H-8}" text-anchor="middle">0</text>
+<text x="${x(lo)}" y="${H-8}" text-anchor="middle">${lo.toFixed(3)}</text><text x="${x(hi)}" y="${H-8}" text-anchor="middle">${hi.toFixed(3)}</text>
+${cs.map((c,i)=>{const y=14+i*rowH,col=c.p_holm!=null?"var(--accent)":"var(--muted)";return `<text x="4" y="${y+4}">${esc(c.name)}</text><line x1="${x(c.ci_low)}" x2="${x(c.ci_high)}" y1="${y}" y2="${y}" stroke="${col}" stroke-width="2"/><circle cx="${x(c.delta)}" cy="${y}" r="4" fill="${col}"/>`;}).join("")}</svg>`;
+}
+function strip(c2){
+  const W=320,H=54,all=c2.deltas.concat([c2.observed,0]),lo=Math.min(...all),hi=Math.max(...all),pad=(hi-lo)*0.08||0.01;
   const x=v=>10+(W-20)*(v-(lo-pad))/((hi+pad)-(lo-pad));
-  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="20 placebo delta IC values as dots, observed delta IC as a vertical line; values in the table below">
+  return `<svg style="max-width:460px" viewBox="0 0 ${W} ${H}" role="img" aria-label="20 shuffled-placebo delta IC values as dots, observed delta IC as a vertical line; values in the table below">
 <line x1="10" x2="${W-10}" y1="28" y2="28" stroke="var(--line)"/><line x1="${x(0)}" x2="${x(0)}" y1="20" y2="36" stroke="var(--muted)"/><text x="${x(0)}" y="49" text-anchor="middle">0</text>
-${r.placebo_deltas.map(v=>`<circle cx="${x(v).toFixed(1)}" cy="28" r="3.5" fill="var(--muted)" fill-opacity=".65"/>`).join("")}
-<line x1="${x(r.delta_ic)}" x2="${x(r.delta_ic)}" y1="8" y2="40" stroke="var(--accent)" stroke-width="3"/><text x="${x(r.delta_ic)}" y="49" text-anchor="${x(r.delta_ic)>W*0.75?"end":"middle"}" style="fill:var(--accent)">observed</text></svg>`;
+${c2.deltas.map(v=>`<circle cx="${x(v).toFixed(1)}" cy="28" r="3.5" fill="var(--muted)" fill-opacity=".65"/>`).join("")}
+<line x1="${x(c2.observed)}" x2="${x(c2.observed)}" y1="8" y2="40" stroke="var(--accent)" stroke-width="3"/><text x="${x(c2.observed)}" y="49" text-anchor="${x(c2.observed)>W*0.75?"end":"middle"}" style="fill:var(--accent)">observed</text></svg>`;
 }
+const CRIT={"1_holm_p_C_vs_B":"1. Holm-adjusted p of C vs B ≤ 0.05","2_min_delta_ic":"2. Delta IC (C − B) ≥ 0.01","3_C_beats_C1_and_C_LM":"3. C beats C1 and C_LM (Holm p ≤ 0.05, positive deltas)","4_both_placebos_passed":"4. Both placebos passed","5_net_topk_C_not_lower_than_B":"5. Net-of-cost top-K of C not lower than B"};
 function worldCard(r){
-  const title=r.world==="null"?"Null world (no link planted)":`Planted world (beta = ${D.meta.beta})`;
-  return `<div class="card"><h2>${title}</h2>
+  const cs=r.comparisons.primary.concat(r.comparisons.exploratory),A=r.arms,names=Object.keys(A);
+  const armRows=names.map(n=>{const a=A[n],P=a.P1||{},S=a.S2||{},y=a.by_year||{};return [`<div style="min-width:150px"><strong>${n}</strong><br><span class="muted">${esc(a.label)}</span></div>`,f4(a.ic),f4(y["2021"]),f4(y["2022"]),f4(P.ic_r),p4(P.auc),p4(P.precision_at_k),f4(P.net_topk),f4(S.ic_z)];});
+  const cmpRows=cs.map(c=>[esc(c.name),esc(c.family),f4(c.delta),`${f4(c.ci_low)} to ${f4(c.ci_high)}`,p4(c.p),c.p_holm!=null?p4(c.p_holm):"not applicable"]);
+  const s=r.samples,sens=r.sensitivity||{};
+  return `<div class="card"><h2>${r.world==="null"?"Null world (no link planted)":`Planted world (beta = ${r.beta})`}</h2>
+<p class="small muted">Run <code>${esc(r.run_id)}</code>, mode ${esc(r.mode)}, primary scorer ${esc(r.primary_scorer)}. Verdict text exactly as stored:</p>
 <div class="verdict">${esc(r.verdict)}</div>
-<dl class="kv"><dt>Delta IC (C − B)</dt><dd>${f4(r.delta_ic)}</dd>
-<dt>One-sided p-value</dt><dd>${r.p_value.toFixed(4)} <span class="muted">(flag threshold ${r.alpha})</span></dd>
-<dt>Unadjusted 95% interval</dt><dd>${f4(r.ci_low)} to ${f4(r.ci_high)}</dd>
-<dt>Mean daily IC, baseline B</dt><dd>${f4(r.ic_b)}</dd><dt>Mean daily IC, with sentiment C</dt><dd>${f4(r.ic_c)}</dd>
-<dt>Placebo (C2)</dt><dd>${r.placebo_pass?"observed ≥ all 20 shuffles":"observed below at least one shuffle"} <span class="muted">(max ${f4(r.placebo_max)})</span></dd>
-<dt>Test days / rows</dt><dd>${r.n_test_days} / ${r.n_test_rows} <span class="muted">(train rows ${r.n_train_rows})</span></dd></dl>
-<h3>20 placebo shuffles vs observed</h3>${placeboStrip(r)}
-<details><summary>Placebo values table</summary><table><thead><tr><th>Shuffle</th><th class="num">Delta IC</th></tr></thead><tbody>
-${r.placebo_deltas.map((v,i)=>`<tr><td>${i+1}</td><td class="num">${f4(v)}</td></tr>`).join("")}<tr><td><strong>observed</strong></td><td class="num"><strong>${f4(r.delta_ic)}</strong></td></tr></tbody></table></details></div>`;
+<h3>Success rule (fixed before the run)</h3>
+${tbl(["Criterion","Met"],Object.entries(r.criteria).map(([k,v])=>[CRIT[k]||esc(k),yes(v)]),[],"tall")}
+<h3>All arms (P1 sample)</h3>
+${tbl(["Arm","Mean daily IC vs Z_exec","IC 2021","IC 2022","IC vs R_exec","AUC vs L_exec","Precision@K","Net top-K excess","IC on S2"],armRows,[1,2,3,4,5,6,7,8],"tall")}
+<p class="small muted">IC = daily Spearman rank correlation, averaged over ${A.B.n_dates} dates (${A.B.n_rows} rows). K = top 10% per day; net = minus 0.004 cost and the day's median. S2 = rows with news. AUC 0.5 = no ranking ability.</p>
+<h3>Delta IC with unadjusted 95% intervals</h3>${forest(cs)}
+${tbl(["Comparison","Family","Delta IC","Unadjusted 95% interval","Raw p (one-sided)","Holm-adjusted p"],cmpRows,[2,3,4,5],"tall")}
+<h3>Placebo C2: 20 within-date shuffles vs observed</h3>${strip(r.placebo.C2)}
+<dl class="kv"><dt>C2 result</dt><dd>${r.placebo.C2.passed?"PASSED":"NOT PASSED"} (observed ${f4(r.placebo.C2.observed)}, max shuffle ${f4(r.placebo.C2.max)}, mean shuffle ${f4(r.placebo.C2.mean)}; needs observed ≥ max and mean &lt; 0.005)</dd>
+<dt>C3 result (sentiment from 20 days earlier)</dt><dd>${r.placebo.C3.passed?"PASSED":"NOT PASSED"} (delta vs B ${f4(r.placebo.C3.delta)}, limit ${f4(r.placebo.C3.limit)}, raw p ${p4(r.placebo.C3.p)}; needs delta ≤ limit and p &gt; 0.10)</dd></dl>
+<details><summary>C2 shuffle values table</summary>${tbl(["Shuffle seed","Delta IC vs B"],r.placebo.C2.deltas.map((v,i)=>[r.placebo.C2.seeds[i],f4(v)]).concat([["<strong>observed C</strong>",`<strong>${f4(r.placebo.C2.observed)}</strong>`]]),[1])}</details>
+<h3>Ablations (exploratory)</h3>
+${tbl(["Variant","Mean IC","Delta vs C","Unadjusted 95% interval","Delta vs B"],(r.ablations||[]).map(a=>[esc(a.name.replace(/_/g," ")),f4(a.ic),f4(a.delta),`${f4(a.ci_low)} to ${f4(a.ci_high)}`,f4(a.delta_vs_B)]),[1,2,3,4],"tall")}
+<h3>Power and sensitivity</h3>
+<dl class="kv"><dt>Bootstrap SE of delta IC (C − B)</dt><dd>${p4(r.power.bootstrap_se)}</dd><dt>Minimum detectable delta (approx.)</dt><dd>${p4(r.power.mde)}</dd>
+<dt>Block length 10 (reported only)</dt><dd>p ${p4((sens.block_10||{}).p)}, interval ${f4((sens.block_10||{}).ci_low)} to ${f4((sens.block_10||{}).ci_high)}</dd>
+<dt>Block length 40 (reported only)</dt><dd>p ${p4((sens.block_40||{}).p)}, interval ${f4((sens.block_40||{}).ci_low)} to ${f4((sens.block_40||{}).ci_high)}</dd></dl>
+<p class="small muted">${esc(r.power.note)}</p>
+<h3>Frozen samples and checks</h3>
+${tbl(["Sample","Rows","SHA-256 of key list"],Object.keys(s.hashes).map(k=>[k,s.counts[k],`<span class="hash">${s.hashes[k]}</span>`]),[1],"tall")}
+<dl class="kv"><dt>Abort checks run</dt><dd>${r.assertions.checked} across ${r.assertions.arms_checked} arms and shuffles, ${r.assertions.failed} failed</dd>
+<dt>Pre-registration</dt><dd>${r.prereg.match?"hashes match the frozen record":"MISMATCH"} (frozen ${esc(r.prereg.frozen_on||"?")})</dd>
+<dt>Folds</dt><dd>${r.folds.map(f=>`test ${f.year}: ${f.n_train} train rows, ${f.n_test} test rows`).join("; ")}</dd></dl></div>`;
 }
-function experiments(){
-  const b=D.experiments.null.bootstrap;
-  return `<p class="note"><strong>Software check on invented data, not evidence about markets.</strong> The planted link was put there on purpose; finding it only shows the pipeline can see an effect that exists by construction.</p>
-<div class="grid" style="margin-top:14px">${worldCard(D.experiments.null)}${worldCard(D.experiments.planted)}</div>
-<div class="card small"><h2>How to read this</h2><p>B = model on price-only baseline features. C = B plus sentiment features. IC = daily rank correlation between the model score and the later ATR-scaled return; delta IC is C minus B, averaged over 2022 test days (trained on 2020–2021 with a purge and embargo gap). The p-value comes from a paired stationary bootstrap (mean block ${b.mean_block} days, ${b.n_resamples} resamples, seed ${b.seed}). The placebo shuffles the sentiment block across stocks within each date; the observed delta must be at least as large as all 20 shuffles. Intervals are unadjusted. Model scores are ranking scores, not probabilities.</p></div>`;
+async function experiments(){
+  const ex=await get("/experiments"),rs=await Promise.all(ex.runs.map(r=>get("/experiments/"+r.run_id))),rb=ex.robustness;
+  const pct=v=>(100*v).toFixed(0)+"%";
+  return `<p class="note"><strong>Software check on invented data, not evidence about markets.</strong> What a verdict does NOT mean: it does not say sentiment helps with real stocks, it does not estimate any real-world effect, and it is not a recommendation. The planted link was put there on purpose; finding it only shows the pipeline can see an effect that exists by construction. A "not detected" or "placebo not excluded" result is a legitimate outcome and is reported as produced.</p>
+<div class="grid">${rs.map(r=>{const c=r.comparisons.primary[0];return `<div class="card"><h2>${r.world==="null"?"Null world":"Planted world"}: summary</h2><div class="verdict">${esc(r.verdict)}</div><dl class="kv"><dt>Delta IC (C − B)</dt><dd>${f4(c.delta)}</dd><dt>Unadjusted 95% interval</dt><dd>${f4(c.ci_low)} to ${f4(c.ci_high)}</dd><dt>Raw p / Holm-adjusted p</dt><dd>${p4(c.p)} / ${p4(c.p_holm)}</dd><dt>Placebos C2 / C3</dt><dd>${r.placebo.C2.passed?"passed":"not passed"} / ${r.placebo.C3.passed?"passed":"not passed"}</dd></dl></div>`;}).join("")}</div>${rs.map(worldCard).join("")}
+<div class="card"><h2>Robustness: ten pre-declared seeds (1 to 10)</h2>
+<dl class="kv"><dt>Null-world false-alarm rate</dt><dd>${pct(rb.null_false_alarm_rate)} (${rb.null_false_alarm_rate*10} of 10)</dd>
+<dt>Planted-world detection rate</dt><dd>${pct(rb.planted_detection_rate)} (${Math.round(rb.planted_detection_rate*10)} of 10)</dd>
+<dt>Planted world, all five criteria met</dt><dd>${pct(rb.planted_criteria_met_rate)}</dd></dl>
+<p class="small muted">${esc(rb.definition)}</p>
+${tbl(["Seed","World","Delta IC (C − B)","Raw p","Holm p","Flagged (criteria 1–2)","Placebos passed","Verdict as stored"],rb.rows.map(x=>[x.seed,x.world,f4(x.delta_ic),p4(x.p),p4(x.p_holm),yes(x.detected),yes(x.placebos_passed),esc(x.verdict)]),[2,3,4],"tall")}</div>
+<div class="card small"><h2>How to read this</h2><p>B = model on price-only features. C = B plus sentiment features from the MOCK MODEL. C_LM = the same from the demo lexicon. C1 = B plus news volume only. C2 and C3 are placebos: sentiment shuffled across stocks, or taken from 20 days earlier. D = sentiment only. A arms are simple volatility rules. Models are refit in each of two folds (test years 2021 and 2022) with a purge and embargo gap. P-values come from a paired stationary bootstrap (mean block 20 days, 2000 resamples, fixed seed). Only three comparisons are Holm-adjusted; everything else is exploratory. Intervals are unadjusted. Model scores are ranking scores, not probabilities.</p></div>`;
 }
 
-function cutoff(){
-  const rows=D.cutoff_cases.map(c=>`<tr><td><code>${esc(c.input)}</code></td><td>${esc(c.precision)}</td><td>${esc(c.local||"–")}</td><td>${esc(c.assigned||"invalid")}</td><td>${esc(c.reason)}</td><td>${esc(c.expected||"invalid")}</td><td>${c.match?"yes":"NO"}</td><td>${esc(c.note)}</td></tr>`).join("");
+/* ---------- Cutoff cases ---------- */
+function cutoffTable(cs){return tbl(["Input (UTC)","Precision","New York time","Assigned day","Reason","Expected","Match","Note"],cs.map(c=>[`<code>${esc(c.input)}</code>`,esc(c.precision),esc(c.local||"–"),esc(c.assigned||"invalid"),esc(c.reason),esc(c.expected||"invalid"),c.match?"yes":"NO",esc(c.note)]),[],"tall");}
+async function cutoff(){
+  const d=await get("/labels/examples");
   return `<div class="card"><h2>Cutoff cases, computed by the real assign() code</h2>
-<p class="muted small">US market, cutoff 15:30 New York time (inclusive). Time zone offsets come from the system zone database, not hard-coded numbers. Calendar: weekdays of 2023 minus ten listed holidays.</p>
-<div class="scroll" style="max-height:none"><table><thead><tr><th>Input (UTC)</th><th>Precision</th><th>New York time</th><th>Assigned day</th><th>Reason</th><th>Expected</th><th>Match</th><th>Note</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+<p class="muted small">US market, cutoff 15:30 New York time (inclusive). Time-zone offsets come from the system zone database, not hard-coded numbers. Calendar: weekdays of 2023 minus ten listed holidays. ${d.cutoff_cases.length} cases.</p>${cutoffTable(d.cutoff_cases)}</div>`;
 }
 
-function render(){
-  const views={overview,sentiment,headlines,experiments,cutoff};
-  $("main").innerHTML=views[state.tab]();
-  const sym=$("sym");if(sym)sym.onchange=e=>{state.symbol=e.target.value;render();$("sym").focus();};
-  const bk=$("bk");if(bk)bk.onchange=e=>{state.bucket=e.target.value;render();$("bk").focus();};
+/* ---------- Model comparison ---------- */
+async function models(){
+  const sc=await get("/scorers"),c=await get("/compare/"+state.symbol);
+  const badge=s=>`<span class="tag ${s==="loaded"?"b0":"b3"}">${s==="loaded"?"loaded":"not loaded"}</span>`;
+  return `<div class="card"><h2>Scorers</h2>
+${tbl(["Scorer","State","Why","Licence","Contamination status","Allowed use"],sc.scorers.map(s=>[`<strong>${esc(s.label)}</strong><br><span class="muted">${esc(s.id)}, ${esc(s.kind)}</span>`,badge(s.status),esc(s.reason),esc(String(s.licence).replace(/_/g," ")),esc(String(s.contamination).replace(/_/g," ")),esc(String(s.allowed_use).replace(/_/g," "))]),[],"tall")}
+<p class="note">${esc(sc.note)}</p></div>
+<div class="card"><div class="controls">${picker("sym","Synthetic ticker",SYMS,state.symbol)}</div>
+<h2>Agreement matrix for ${esc(c.symbol)} (${c.n} headlines)</h2>
+<p class="muted small">Rows: ${esc(c.row_scorer)}. Columns: ${esc(c.col_scorer)}. Counts of the same headlines under each pair.</p>
+${tbl(["Lexicon bucket \\ model label"].concat(c.cols),c.rows.map((b,i)=>[esc(b)].concat(c.matrix[i])),[1,2,3],"tall")}
+<dl class="kv"><dt>Same sign of x</dt><dd>${c.sign_agreement.agree} of ${c.sign_agreement.n} (${c.sign_agreement.share==null?"–":(100*c.sign_agreement.share).toFixed(1)+"%"}), ${esc(c.sign_agreement.definition)}</dd></dl>
+<p class="small muted">${esc(c.note)}</p></div>`;
+}
+
+/* ---------- Feature explanations ---------- */
+async function features(){
+  const defs=await get("/features/definitions"),ser=await get(`/sentiment/${state.symbol}?scorer=${state.scorer}`);
+  if(!state.date||!ser.dates.includes(state.date)){let i=ser.count.length-1;while(i>0&&!ser.count[i])i--;state.date=ser.dates[i];}
+  const i=ser.dates.indexOf(state.date);
+  let at={S1:ser.S1[i],S5:ser.S5[i],N1:ser.count[i]},arts=null,note="";
+  try{at=(await get(`/sentiment/${state.symbol}?scorer=${state.scorer}&date=${state.date}`)).at;arts=await get(`/sentiment/${state.symbol}/headlines?date=${state.date}&limit=40&offset=0`);}
+  catch(e){note="NVS, ABN and the articles behind the values need the live API (.venv/bin/python -m se.cli serve).";}
+  const vals=[["S1",f4(at.S1)],["S5",f4(at.S5)],["NVS",at.NVS===undefined?"needs API":f4(at.NVS)],["ABN",at.ABN===undefined?"needs API":f4(at.ABN)],["has_news",at.has_news===undefined?"needs API":at.has_news],["Articles that day",at.N1],["Articles in 5 days",at.N5===undefined?"needs API":at.N5]];
+  return `<div class="card"><h2>Actual values for one stock and day</h2>
+<div class="controls">${picker("sym","Synthetic ticker",SYMS,state.symbol)}${picker("scorer","Scorer",SC_OPTS,state.scorer)}${picker("fdate","Trading day",ser.dates.slice().reverse(),state.date)}</div>
+${tbl(["Feature","Value"],vals,[1],"tall")}${note?`<p class="note">${note}</p>`:""}
+${arts?`<h3>Articles behind S5 (assigned to ${arts.window[0]} … ${arts.window[1]})</h3>${arts.items.length?tbl(["Headline (synthetic)","Assigned day","Used","Weight","Lexicon bucket","Model label","Model x"],arts.items.map(h=>[esc(h.headline),esc(h.assigned),yes(h.kept),h.weight,tag(h.lexicon.bucket),tag(h.model.label,MOD),f4(h.model.x)]),[3,6],"tall"):'<p class="muted">No articles in this window.</p>'}`:""}
+<p class="small muted">Missing values show as “–”. Blank means the feature is undefined for that day, not zero.</p></div>
+<div class="grid">${defs.definitions.map(d=>`<div class="card"><h2>${esc(d.id)}: ${esc(d.name)}</h2><p class="formula">${esc(d.formula)}</p>
+<dl class="kv"><dt>Plain meaning</dt><dd>${esc(d.plain)}</dd><dt>Why it is there</dt><dd>${esc(d.why)}</dd><dt>Limits</dt><dd>${esc(d.limits)}</dd><dt>Missing data</dt><dd>${esc(d.missing)}</dd></dl></div>`).join("")}</div>`;
+}
+
+/* ---------- Gates ---------- */
+async function gatesView(){
+  const g=await get("/gates");
+  const cls=s=>s==="allowed"?"b0":(s==="blocked"||s==="rejected")?"b1":"b2";
+  return `<div class="card"><h2>Gates: what may be used, and what would unlock the rest</h2>
+<p class="note">Source: ${esc(g.audit.source)} dated ${esc(g.audit.date)}. ${esc(g.audit.note)} The software only reads this file; it does not check licences itself.</p>
+${tbl(["Item","Status","Reason","What unlocks it","Who acts"],Object.entries(g.gates).map(([k,v])=>[`<strong>${esc(k)}</strong>${v.licence?`<br><span class="muted">licence: ${esc(String(v.licence).replace(/_/g," "))}</span>`:""}${v.contamination?`<br><span class="muted">contamination: ${esc(String(v.contamination).replace(/_/g," "))}</span>`:""}`,`<span class="tag ${cls(v.status)}">${esc(v.status.replace(/_/g," "))}</span>`,esc(v.reason),esc(v.unlock),esc(v.who)]),[],"tall")}
+<p class="small muted">Confirmatory runs are refused by code unless a data licence is verified as permitted, a scorer is verified clear of contamination, the pre-registration matches and the frozen sample files exist. Under this file, they are always refused.</p></div>`;
+}
+
+/* ---------- Method tools ---------- */
+async function tools(){
+  const d=await get("/labels/examples"),a=state.assign;
+  const res=a?(a.error?`<p class="note">${esc(a.error)}</p>`:`<dl class="kv"><dt>Input</dt><dd><code>${esc(a.input)}</code> (${esc(a.precision)}), market ${esc(a.market)}</dd><dt>Local time</dt><dd>${esc(a.local||"–")} (${esc(a.time_zone)}, cutoff ${esc(a.cutoff_local)})</dd><dt>Assigned trading day</dt><dd><strong>${esc(a.assigned||"invalid")}</strong></dd><dt>Reason</dt><dd>${esc(a.reason)}</dd><dt>Calendar</dt><dd>${esc(a.calendar)}</dd></dl>`):"";
+  return `<div class="card"><h2>Cutoff explainer</h2><p class="muted small">Runs the real assign() function on the server. Enter a UTC timestamp with a zone (for example <code>2023-03-14T19:30:00Z</code>) or a date.</p>
+<div class="controls"><span><label for="ts">Published</label><input type="text" id="ts" value="${esc(a&&a.input||"2023-03-14T19:30:01Z")}" size="24"></span>${picker("mkt","Market",["US","NSE"],a&&a.market||"US")}${picker("prec","Precision",["timestamp","date"],a&&a.precision||"timestamp")}<button class="btn primary" id="go">Assign day</button></div>
+${MODE!=="api"?`<p class="note">${NEEDS_API}. The fixed cases below still come from the real code.</p>`:""}${res}</div>
+<div class="card"><h2>Worked label examples (computed now by the real functions)</h2><p class="note">${esc(d.statement)}</p>
+${d.examples.map(e=>`<h3>${esc(e.title)}</h3><p class="small"><span class="muted">Inputs:</span> ${esc(e.inputs)}<br><span class="muted">Rule:</span> ${esc(e.steps)}</p>${tbl(["Quantity","Value"],Object.entries(e.result).map(([k,v])=>[esc(k),esc(Array.isArray(v)?v.join(", "):v)]),[1],"tall")}`).join("")}</div>
+<div class="card"><h2>Fixed cutoff cases</h2>${cutoffTable(d.cutoff_cases)}</div>`;
+}
+
+/* ---------- Methodology ---------- */
+async function method(){
+  return `<div class="card"><h2>Methodology in plain words</h2><ol>
+<li><strong>Timing.</strong> Each article gets one trading day. News at or before the cutoff (15:30 New York) counts for that day; later news, weekend news and date-only items count for the next trading day.</li>
+<li><strong>Clean-up.</strong> Repeated headlines within 48 hours are dropped; an article about k stocks counts 1/k for each.</li>
+<li><strong>Scoring.</strong> Each headline gets a tone score x from a scorer. Here: a demo lexicon and a MOCK MODEL. Neither output is a probability of any price move.</li>
+<li><strong>Features.</strong> S1, S5, NVS and ABN summarise tone and volume per stock and day, using only articles available by that day's cutoff, then ranked across stocks.</li>
+<li><strong>Label.</strong> The return from the next open to the open ten trading days later, divided by recent volatility (ATR). No equivalence with any close-to-close label is claimed.</li>
+<li><strong>Frozen samples.</strong> The rows used for training and testing are fixed and hashed before any placebo is run, so every arm is compared on identical rows.</li>
+<li><strong>Folds.</strong> Train on the past, test on 2021 and then 2022, leaving a gap so that no training label overlaps the test period.</li>
+<li><strong>Statistics.</strong> Daily rank correlation (IC), a block bootstrap for uncertainty, Holm correction over three planned comparisons, and two placebos.</li>
+<li><strong>Verdict.</strong> One function turns the fixed success rule into one fixed sentence. Rules were hashed before the run.</li></ol></div>
+<div class="grid"><div class="card"><h2>Limitations</h2><ul>
+<li>All prices and headlines are invented. Nothing here is evidence about markets.</li>
+<li>The scorers are circular on this data: headlines are built from the demo word list.</li>
+<li>Thirty tickers and about 480 test days: uncertainty is large, and the baseline itself is unstable between seeds.</li>
+<li>Ten seeds give a coarse rate (steps of 10%).</li>
+<li>No transaction-cost model beyond a flat 0.004; no liquidity, borrow or capacity.</li>
+<li>FinBERT and Loughran-McDonald adapters have never been run on real inputs here.</li>
+<li>The 2023 and synthetic calendars are illustrative, not exchange calendars.</li></ul></div>
+<div class="card"><h2>Why a "not detected" result is acceptable</h2>
+<p>The purpose is an honest instrument, not a positive result. If the planted link is not flagged, or a placebo also looks good, that is reported as produced: it tells us how much data or how strong a link this design needs. Changing seeds, thresholds or the planted strength after seeing results would defeat the check, so they are frozen.</p>
+<h3>What cannot be claimed</h3><ul><li>That sentiment helps rank real stocks.</li><li>That any scorer here measures real tone.</li><li>That results would carry over to real data.</li></ul></div></div>`;
+}
+
+const VIEWS={overview,sentiment,headlines,experiments,cutoff,models,features,gates:gatesView,tools,method};
+let seq=0;
+async function render(){
+  const my=++seq,main=$("main");
+  main.innerHTML='<div class="card muted">Loading…</div>';
+  let html;
+  try{html=await VIEWS[state.tab]();}catch(e){html=`<div class="card"><h2>Could not show this view</h2><p>${esc(e.message)}</p></div>`;}
+  if(my!==seq)return;
+  main.innerHTML=html;
+  const on=(id,ev,fn)=>{const el=$(id);if(el)el.addEventListener(ev,fn);};
+  const re=id=>()=>render().then(()=>{const el=$(id);if(el)el.focus();});
+  on("sym","change",e=>{state.symbol=e.target.value;state.offset=0;re("sym")();});
+  on("scorer","change",e=>{state.scorer=e.target.value;re("scorer")();});
+  on("flt","change",e=>{state.filter=e.target.value;re("flt")();});
+  on("fdate","change",e=>{state.date=e.target.value;re("fdate")();});
+  on("prev","click",()=>{state.offset=Math.max(0,state.offset-40);re("prev")();});
+  on("next","click",()=>{state.offset+=40;re("next")();});
+  on("go","click",async()=>{
+    const q=`ts=${encodeURIComponent($("ts").value.trim())}&market=${$("mkt").value}&precision=${$("prec").value}`;
+    try{state.assign=await get("/tools/assign-day?"+q);}catch(e){state.assign={error:e.message,input:$("ts").value,market:$("mkt").value,precision:$("prec").value};}
+    re("go")();
+  });
 }
 $("tabs").addEventListener("click",e=>{const b=e.target.closest("button[data-tab]");if(b){show(b.dataset.tab);$("tab-"+b.dataset.tab).focus();}});
 $("tabs").addEventListener("keydown",e=>{
@@ -178,16 +339,18 @@ $("tabs").addEventListener("keydown",e=>{
   const i=TABS.findIndex(t=>t[0]===state.tab),j=(i+(e.key==="ArrowRight"?1:TABS.length-1))%TABS.length;
   show(TABS[j][0]);$("tab-"+TABS[j][0]).focus();
 });
-fetch("data.json").then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json();}).then(d=>{
-  D=d;state.symbol=d.symbols[0];
+async function boot(){
+  try{const r=await fetch("api/health");if(r.ok&&(await r.json()).data.status==="ok")MODE="api";}catch(e){}
+  if(MODE!=="api"){const r=await fetch("data.json");if(!r.ok)throw new Error("HTTP "+r.status);BUNDLE=await r.json();}
+  META=await get("/meta");SYMS=(await get("/symbols")).symbols;state.symbol=SYMS[0];
   const h=location.hash.slice(1);if(TABS.some(t=>t[0]===h))state.tab=h;
-  $("banner").textContent=d.meta.banner;
-  $("meta").textContent=`Synthetic data, seed ${d.meta.seed}, ${d.meta.first_day} to ${d.meta.last_day}. Nothing here describes a real company or market.`;
+  $("banner").textContent=META.banner;
+  $("meta").textContent=`Synthetic data, seed ${META.seed}, ${META.first_day} to ${META.last_day}. Nothing here describes a real company or market.`;
   renderTabs();render();
-}).catch(err=>{
-  renderTabs();
-  $("meta").textContent="";
-  $("main").innerHTML=`<div class="card"><h2>No data yet</h2><p>Could not load <code>data.json</code> (${esc(err.message)}). Run <code>.venv/bin/python run_demo.py</code>, then <code>.venv/bin/python serve.py</code>, and open http://127.0.0.1:8000/.</p></div>`;
+}
+boot().catch(err=>{
+  renderTabs();$("meta").textContent="";
+  $("main").innerHTML=`<div class="card"><h2>No data yet</h2><p>Could not load data (${esc(err.message)}). Run <code>.venv/bin/python run_demo.py</code>, then <code>.venv/bin/python -m se.cli serve</code>, and open the address it prints.</p></div>`;
 });
 </script>
 </body>

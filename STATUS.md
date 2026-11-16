@@ -1,19 +1,20 @@
 # STATUS
 
-Done: Stages 1-4 (PROMPT.md) and Phase 5 of PROMPT2.md (experiment framework). 50 tests pass. Demo 23 s.
-Phase 5 adds: MOCK MODEL scorer, arms A/B/C/C_LM/C1/C2/C3/D, frozen samples + 5 abort checks, 2 folds,
-secondary metrics, Holm, placebo criteria, success rule, ablations, power, 10-seed robustness,
-configs/profile.yaml + docs/PREREGISTRATION_SYNTHETIC.md frozen in runs/prereg.json, run modes, gates.yaml.
+Done: Stages 1-4 (PROMPT.md); PROMPT2.md Phases 5, 6, 7, 8. Each phase committed locally.
+- 5: experiment framework, pre-registration (frozen before first run), gates.yaml, run modes.
+- 6: LM lexicon / local HF classifier / FinBERT / finbert-tone adapters (fake-tested only, no weights).
+- 7: SQLite layer (var/demo.sqlite, gitignored), CSV importers.
+- 8: read-only FastAPI (`python -m se.cli serve`), 10-tab dashboard with static fallback (web/data.json),
+     20 screenshots in docs/screenshots/ (every tab, desktop and 360 px, all looked at).
 
-Results as produced (seed 7, beta 0.002, pre-registration frozen before the first run):
+Results as produced (seed 7, beta 0.002):
 - null:    SYNTHETIC SOFTWARE CHECK: no effect flagged
-- planted: SYNTHETIC SOFTWARE CHECK: placebo not excluded  (C vs B delta IC +0.0603, Holm p 0.0015; C3 placebo not passed)
-- 10 seeds: null false-alarm rate 0.00; planted detection rate 0.40 (3 not detected, 3 placebo not excluded, 4 flagged)
+- planted: SYNTHETIC SOFTWARE CHECK: placebo not excluded  (C vs B delta IC +0.0603, Holm p 0.0015; C3 not passed)
+- 10 seeds: null false-alarm rate 0.00; planted detection rate 0.40
 
-Next: Phase 6 (scorer adapters), 7 (SQLite, importers), 8 (API, dashboard), 9 (docs, final checks).
+Next: Phase 9 (docs set, 14 US cutoff cases + NSE cases in tests, scripts/check_all.sh, verify, final report).
 
 Known issues:
-- Baseline B has a negative test IC on seed 7 in both worlds, so arms that add any columns (C3, D) look
-  better than B even in the null world. This is why the C3 placebo is not passed. Not tuned; documented.
-- README results table and web dashboard still show the Stage 1-4 layout until Phases 8-9.
-- runs/ is gitignored except runs/prereg.json.
+- Baseline B has negative test IC on seed 7, so placebo C3 (and D) beat B even in the null world. Not tuned.
+- Cutoff-explainer button was not clicked in a browser (its API endpoint is tested; the form is screenshot-checked).
+- README still describes Stages 1-4 until Phase 9.

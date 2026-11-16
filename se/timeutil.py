@@ -103,6 +103,11 @@ CUTOFF_CASES = [
     ("2023-03-17", "date", "2023-03-20", "date-only on a Friday"),
     ("2023-11-22T21:00:00Z", "timestamp", "2023-11-24", "Thanksgiving 11-23 closed"),
     ("2023-11-23T15:00:00Z", "timestamp", "2023-11-24", "published on a holiday"),
+    ("2023-01-10T19:30:00Z", "timestamp", "2023-01-10", "14:30 EST, before cutoff"),
+    ("2023-11-03T19:30:00Z", "timestamp", "2023-11-03", "15:30 EDT, last Friday before clocks change"),
+    ("2023-11-03T20:00:00Z", "timestamp", "2023-11-06", "16:00 EDT Friday, after cutoff"),
+    ("2023-11-06T20:30:00Z", "timestamp", "2023-11-06", "15:30 EST, first Monday after clocks change"),
+    ("2023-11-06T19:30:00Z", "timestamp", "2023-11-06", "14:30 EST, before cutoff"),
     ("2023-03-14T19:30:00", "timestamp", None, "naive timestamp: invalid"),
 ]
 
