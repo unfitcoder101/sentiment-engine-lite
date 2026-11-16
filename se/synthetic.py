@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 from .dedup import expand_and_dedup
-from .scorer import NEG, POS, score
+from .scorer import NEG, POS, mock_model_score, score
 from .timeutil import assign, weekday_calendar
 
 SEED = 7
@@ -73,7 +73,9 @@ def process_articles(articles, cal, market=MARKET, as_of=AS_OF):
     for a in articles:
         day, reason = assign(a["published"], market, cal, a["precision"], as_of)
         sc = score(a["headline"], a["symbols"])
-        a.update(assigned=day, reason=reason, x=sc["x"], bucket=sc["bucket"], matched=sc["matched"], dropped_dup=False)
+        mm = mock_model_score(a["headline"], a["symbols"])
+        a.update(assigned=day, reason=reason, x=sc["x"], bucket=sc["bucket"], matched=sc["matched"], dropped_dup=False,
+                 lex_p=sc["P"], lex_n=sc["N"], x_mock=mm["x"], label_mock=mm["label"], scores_mock=mm["output_scores"])
         if day is not None:
             p = a["published"]
             ts = datetime.fromisoformat((p + "T00:00:00+00:00") if a["precision"] == "date" else p.replace("Z", "+00:00"))
@@ -82,7 +84,8 @@ def process_articles(articles, cal, market=MARKET, as_of=AS_OF):
     for d in dropped:
         articles[d["id"]]["dropped_dup"] = True
     return pd.DataFrame([{"id": k["id"], "symbol": k["symbol"], "t": cal.index[k["assigned"]], "x": k["x"],
-                          "w": k["weight"], "u": k["u"], "bucket": k["bucket"]} for k in kept])
+                          "w": k["weight"], "u": k["u"], "bucket": k["bucket"],
+                          "x_mock": k["x_mock"], "label_mock": k["label_mock"]} for k in kept])
 
 
 def _shift(a, j):

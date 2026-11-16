@@ -6,7 +6,7 @@ from pathlib import Path
 
 import numpy as np
 
-from se import experiment, scorer, synthetic, timeutil
+from se import experiment, scorer, study, synthetic, timeutil
 
 BANNER = ("Educational research prototype. Data origin: SYNTHETIC. "
           "No evidence of predictive value. Not investment advice.")
@@ -21,7 +21,8 @@ def main():
     data = synthetic.generate()
     cal, symbols, arts, asg = data["cal"], data["symbols"], data["articles"], data["assignments"]
     feats = experiment.sentiment_features(asg, symbols, len(cal.days))
-    results = {w: experiment.run_world(w, data["bars"][w], feats, cal) for w in ("null", "planted")}
+    results = {w: study.run_study(data, w) for w in ("null", "planted")}
+    robust = study.run_robustness()
 
     days = [d.isoformat() for d in cal.days]
     series = {}
@@ -60,6 +61,7 @@ def main():
         "buckets": buckets,
         "headlines": sample,
         "experiments": results,
+        "robustness": robust,
         "cutoff_cases": timeutil.run_cutoff_cases(),
     }
     path = Path(__file__).parent / "web" / "data.json"
@@ -68,6 +70,8 @@ def main():
     for w, r in results.items():
         print(f"{w:8s} delta_ic={r['delta_ic']:+.4f} p={r['p_value']:.4f} "
               f"placebo_max={r['placebo_max']:+.4f} -> {r['verdict']}")
+    print(f"robustness (10 seeds): null false-alarm rate {robust['null_false_alarm_rate']:.2f}, "
+          f"planted detection rate {robust['planted_detection_rate']:.2f}")
     print(f"wrote {path} ({path.stat().st_size // 1024} KB) in {time.time() - t0:.1f}s")
 
 

@@ -1,0 +1,7 @@
+{
+  "config_sha256": "18a547cac8d987ce1abccf3f0afee677cbfe179baa0a08d35d784ac5aa69420a",
+  "prereg_doc_sha256": "f0e44be6d75bcfe09fa1cfd7181a2204fbefdb1f79a33ef53eb05bac62f7354f",
+  "config": "configs/profile.yaml",
+  "prereg_doc": "docs/PREREGISTRATION_SYNTHETIC.md",
+  "frozen_on": "2026-11-16"
+}

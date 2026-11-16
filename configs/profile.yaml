@@ -1,0 +1,58 @@
+# Frozen settings for the synthetic software check. Hashed by `python -m se.cli prereg-freeze`.
+# Do not edit after freezing: synthetic_validation runs abort on a hash mismatch.
+profile: synthetic_demo_v1
+data:
+  origin: SYNTHETIC
+  market: US
+  seed: 7
+  beta: 0.002
+  n_symbols: 30
+robustness_seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+labels:
+  horizon: 10
+  atr_window: 14
+  atr_floor: 0.001
+  min_group: 20
+  top_share: 0.30
+features:
+  warmup: 64
+  base_window: 60
+  min_base: 10
+  min_rank: 5
+scorers:
+  primary: mock_model
+  lexicon_baseline: demo_lexicon
+  mock_noise_sd: 0.5
+model:
+  type: logistic_regression
+  scaler: standard
+  C: 1.0
+  class_weight: balanced
+folds:
+  scheme: expanding
+  test_years: [2021, 2022]
+  embargo: 5
+metrics:
+  primary: mean_daily_spearman_ic_vs_z_exec
+  min_stocks_p1: 20
+  min_stocks_s2: 10
+  top_k_share: 0.10
+  cost: 0.004
+statistics:
+  mean_block: 20
+  n_resamples: 2000
+  seed: 12345
+  sensitivity_blocks: [10, 40]
+  alpha: 0.05
+  holm_family: [C_vs_B, C_vs_C1, C_vs_C_LM]
+placebo:
+  c2_n: 20
+  c2_seed_start: 1000
+  c2_mean_max: 0.005
+  c3_lag: 20
+  c3_ratio_max: 0.5
+  c3_p_min: 0.10
+success:
+  min_delta_ic: 0.01
+power:
+  target_power_z: 0.8416

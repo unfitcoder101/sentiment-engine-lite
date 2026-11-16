@@ -70,14 +70,9 @@ def shuffle_block(panel, seed):
 
 
 def verdict(world, p, placebo_pass):
-    flagged = p < ALPHA
-    if flagged and not placebo_pass:
-        tail = "placebo not excluded"
-    elif world == "planted":
-        tail = "planted effect detected" if flagged else "not detected"
-    else:
-        tail = "no effect flagged" if not flagged else "effect flagged in null world (false alarm)"
-    return "SYNTHETIC SOFTWARE CHECK: " + tail
+    """Legacy signature; the text comes from the single verdict function."""
+    from .verdicts import verdict_text
+    return verdict_text("synthetic_validation", world, p < ALPHA, placebo_pass, False)
 
 
 def run_world(world, bars, feats, cal, boot_seed=12345):
