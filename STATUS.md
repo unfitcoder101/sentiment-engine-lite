@@ -1,20 +1,20 @@
 # STATUS
 
-Done: Stages 1-4 (PROMPT.md); PROMPT2.md Phases 5, 6, 7, 8. Each phase committed locally.
-- 5: experiment framework, pre-registration (frozen before first run), gates.yaml, run modes.
-- 6: LM lexicon / local HF classifier / FinBERT / finbert-tone adapters (fake-tested only, no weights).
-- 7: SQLite layer (var/demo.sqlite, gitignored), CSV importers.
-- 8: read-only FastAPI (`python -m se.cli serve`), 10-tab dashboard with static fallback (web/data.json),
-     20 screenshots in docs/screenshots/ (every tab, desktop and 360 px, all looked at).
+Done: Stages 1-4 (PROMPT.md) and Phases 5-9 (PROMPT2.md). All committed locally; no remote, nothing pushed.
+Tests: 99 passed, 1 skipped (needs real model weights). `sh scripts/check_all.sh` passes; verify 12/12.
 
-Results as produced (seed 7, beta 0.002):
+Results as produced (SYNTHETIC data, seed 7, beta 0.002, rules frozen before the first run):
 - null:    SYNTHETIC SOFTWARE CHECK: no effect flagged
-- planted: SYNTHETIC SOFTWARE CHECK: placebo not excluded  (C vs B delta IC +0.0603, Holm p 0.0015; C3 not passed)
+- planted: SYNTHETIC SOFTWARE CHECK: placebo not excluded
 - 10 seeds: null false-alarm rate 0.00; planted detection rate 0.40
 
-Next: Phase 9 (docs set, 14 US cutoff cases + NSE cases in tests, scripts/check_all.sh, verify, final report).
+Run: `.venv/bin/python run_demo.py` then `.venv/bin/python -m se.cli serve` (http://127.0.0.1:8000/).
+Read first: docs/FINAL_REPORT.md, docs/PROFESSOR_WALKTHROUGH.md, docs/DECISIONS.md.
+
+Next: nothing required. Owner actions are listed in docs/FINAL_REPORT.md and docs/GATES.md.
 
 Known issues:
-- Baseline B has negative test IC on seed 7, so placebo C3 (and D) beat B even in the null world. Not tuned.
-- Cutoff-explainer button was not clicked in a browser (its API endpoint is tested; the form is screenshot-checked).
-- README still describes Stages 1-4 until Phase 9.
+- Planted link flagged on only 4 of 10 seeds; baseline B is unstable in a 30-ticker universe (see METHODOLOGY.md s10).
+- Cutoff-explainer button not clicked in a browser (endpoint tested, form screenshot-checked).
+- Adapters and importers never run on real inputs. No pipeline over imported data.
+- Do not re-run `prereg-freeze` unless starting a new pre-registration.
