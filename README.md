@@ -1,10 +1,10 @@
-# Sentiment Engine Lite
+# Sentiment Engine Lite                     
 
-**Educational research prototype. Data origin: SYNTHETIC. No evidence of predictive value. Not investment advice.**
+**Educational research prototype. Data origin: SYNTHETIC. No evidence of predictive value. Not investment advice.**                         
 
 A university prototype of a research pipeline for the question "does financial-news sentiment help rank
 stocks?". It runs only on invented prices and invented headlines. It is a tested, explainable prototype with an
-extensible research framework; it says nothing about real markets.
+extensible research framework; it says nothing about real markets.                        
 
 ## Run
 
@@ -18,7 +18,7 @@ python3 -m venv .venv
 Open http://127.0.0.1:8000/ . The demo step takes about 25 seconds. `.venv/bin/python serve.py` also works
 (static dashboard without the interactive tools). Full check: `sh scripts/check_all.sh`.
 
-## What it shows
+## What it shows                     
 
 - **Timing:** each article is assigned to a trading day with a 15:30 New York cutoff; 15 worked cases.
 - **Labels and features:** open-to-open returns scaled by volatility; four sentiment features.
